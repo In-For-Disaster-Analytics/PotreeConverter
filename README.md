@@ -19,6 +19,37 @@ Altough the converter made a major step to version 2.0, the format it produces i
 
 # Getting Started
 
+## Docker (Recommended)
+
+The easiest way to run PotreeConverter is using Docker:
+
+1. **Pull the pre-built image:**
+   ```bash
+   docker pull ghcr.io/potree/potreeconverter:latest
+   ```
+
+2. **Or build locally:**
+   ```bash
+   docker build -t potreeconverter .
+   ```
+
+3. **Run the converter:**
+   ```bash
+   # Basic usage
+   docker run -it --user $(id -u):$(id -g) \
+     -v /path/to/input:/data \
+     potreeconverter -i /data/input.laz -o /data/output
+
+   # With sampling strategy
+   docker run -it --user $(id -u):$(id -g) \
+     -v /path/to/input:/data \
+     potreeconverter -i /data/input.laz -o /data/output -m poisson
+   ```
+
+   **Note:** The `--user $(id -u):$(id -g)` flag ensures the container runs with your user permissions, allowing it to read input files and write output files.
+
+## Build from Source
+
 1. Download windows binaries or
     * Download source code
 	* Install [CMake](https://cmake.org/) 3.16 or later
