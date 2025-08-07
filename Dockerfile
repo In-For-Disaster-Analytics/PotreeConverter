@@ -1,0 +1,54 @@
+# Multi-stage build for PotreeConverter
+FROM ubuntu:22.04 AS builder
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    libtbb-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code
+COPY . .
+
+# Create build directory and build
+RUN mkdir -p build && \
+    cd build && \
+    cmake ../ && \
+    make -j$(nproc)
+
+# Runtime stage
+FROM ubuntu:22.04
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libtbb12 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -s /bin/bash potree
+
+# Copy built executable, shared libraries, and resources
+COPY --from=builder /app/build/PotreeConverter /home/potree/
+COPY --from=builder /app/build/liblaszip.so* /usr/local/lib/
+COPY --from=builder /app/build/resources /home/potree/resources
+COPY --from=builder /app/build/licenses /home/potree/licenses
+
+# Update library cache and set proper permissions
+RUN ldconfig && chmod +x /home/potree/PotreeConverter && \
+    chmod -R 755 /home/potree
+
+# Switch to non-root user
+USER potree
+WORKDIR /home/potree
+
+# Default command
+ENTRYPOINT ["/home/potree/PotreeConverter"]
+CMD ["--help"]
