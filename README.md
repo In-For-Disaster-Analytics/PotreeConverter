@@ -25,7 +25,7 @@ The easiest way to run PotreeConverter is using Docker:
 
 1. **Pull the pre-built image:**
    ```bash
-   docker pull ghcr.io/potree/potreeconverter:latest
+   docker pull ghcr.io/mosoriob/potreeconverter:latest
    ```
 
 2. **Or build locally:**
@@ -47,6 +47,28 @@ The easiest way to run PotreeConverter is using Docker:
    ```
 
    **Note:** The `--user $(id -u):$(id -g)` flag ensures the container runs with your user permissions, allowing it to read input files and write output files.
+
+## TACC Usage with Apptainer
+
+On TACC systems, use Apptainer (formerly Singularity) to run the container:
+
+1. **Load the Apptainer module:**
+   ```bash
+   module load tacc-apptainer
+   ```
+
+2. **Run PotreeConverter:**
+   ```bash
+   # Basic usage
+   apptainer exec docker://ghcr.io/mosoriob/potreeconverter:latest \
+     PotreeConverter -i /path/to/input.laz -o /path/to/output
+
+   # With sampling strategy
+   apptainer exec docker://ghcr.io/mosoriob/potreeconverter:latest \
+     PotreeConverter -i /path/to/input.laz -o /path/to/output -m poisson
+   ```
+
+   **Note:** Apptainer automatically maps your home directory and current working directory, so file paths work as expected without additional volume mounting.
 
 ## Build from Source
 
