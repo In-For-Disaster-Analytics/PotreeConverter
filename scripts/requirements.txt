@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+# No external dependencies required - uses only Python standard library:
+# - json (for metadata parsing)  
+# - argparse (for command-line interface)
+# - pathlib (for file path handling)
+# - typing (for type hints)
+# - math, sys (for calculations and system operations)
+
+# Optional dependencies for advanced features (if needed in future):
+# requests>=2.25.0  # For downloading remote metadata files
+# pydantic>=1.8.0   # For data validation
+# click>=8.0.0      # Alternative CLI framework
