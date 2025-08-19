@@ -128,7 +128,7 @@ namespace chunker_countsort_laszip {
 		vector<int> grid;
 	};
 
-	vector<std::atomic_int32_t> countPointsInCells(vector<Source> sources, Vector3 min, Vector3 max, int64_t gridSize, State& state, Attributes& outputAttributes, Monitor* monitor) {
+	vector<std::atomic_int32_t> countPointsInCells(vector<Source> sources, Vector3 min, Vector3 max, int64_t gridSize, State& state, Attributes& outputAttributes, Monitor* monitor, ::Options options) {
 
 		cout << endl;
 		cout << "=======================================" << endl;
@@ -713,7 +713,7 @@ namespace chunker_countsort_laszip {
 
 	}
 
-	void distributePoints(vector<Source> sources, Vector3 min, Vector3 max, string targetDir, NodeLUT& lut, State& state, Attributes& outputAttributes, Monitor* monitor) {
+	void distributePoints(vector<Source> sources, Vector3 min, Vector3 max, string targetDir, NodeLUT& lut, State& state, Attributes& outputAttributes, Monitor* monitor, ::Options options) {
 
 		cout << endl;
 		cout << "=======================================" << endl;
@@ -750,7 +750,7 @@ namespace chunker_countsort_laszip {
 
 		printElapsedTime("distributePoints1", tStart);
 
-		auto processor = [&mtx_push_point, &counters, targetDir, &state, tStart, &outputAttributes](shared_ptr<Task> task) {
+		auto processor = [&mtx_push_point, &counters, targetDir, &state, tStart, &outputAttributes, &options](shared_ptr<Task> task) {
 
 			auto path = task->path;
 			auto batchSize = task->batchSize;
@@ -926,7 +926,12 @@ namespace chunker_countsort_laszip {
 
 					logger::ERROR(ss.str());
 
-					exit(123);
+					if (options.continueOnError) {
+						logger::ERROR("Skipping point due to --continue-on-error flag");
+						continue; // Skip this point and continue with the next one
+					} else {
+						exit(123);
+					}
 				}
 
 				counts[nodeIndex]++;
@@ -1289,7 +1294,7 @@ namespace chunker_countsort_laszip {
 		}
 
 		// COUNT
-		auto grid = countPointsInCells(sources, min, max, gridSize, state, outputAttributes, monitor);
+		auto grid = countPointsInCells(sources, min, max, gridSize, state, outputAttributes, monitor, options);
 
 		{ // DISTIRBUTE
 			auto tStartDistribute = now();
@@ -1297,7 +1302,7 @@ namespace chunker_countsort_laszip {
 			auto lut = createLUT(grid, gridSize);
 
 			state.currentPass = 2;
-			distributePoints(sources, min, max, targetDir, lut, state, outputAttributes, monitor);
+			distributePoints(sources, min, max, targetDir, lut, state, outputAttributes, monitor, options);
 
 			{
 				double duration = now() - tStartDistribute;
