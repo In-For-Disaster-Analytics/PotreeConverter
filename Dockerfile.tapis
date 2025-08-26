@@ -51,6 +51,7 @@ USER potree
 WORKDIR /home/potree
 
 COPY scripts/potree_scene_generator.py .
+COPY --chmod=755 run.sh /tapis/run.sh
+
 # Default command
-ENTRYPOINT ["/home/potree/PotreeConverter"]
-CMD ["--help"]
+ENTRYPOINT [ "/tapis/run.sh" ]
