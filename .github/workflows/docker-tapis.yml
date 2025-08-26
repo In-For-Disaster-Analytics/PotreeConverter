@@ -42,13 +42,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-tapis
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-tapis
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch,suffix=-tapis
+            type=ref,event=pr,suffix=-tapis
+            type=semver,pattern={{version}},suffix=-tapis
+            type=semver,pattern={{major}}.{{minor}},suffix=-tapis
+            type=raw,value=latest-tapis,enable={{is_default_branch}}
+            type=sha,prefix={{branch}}-,suffix=-tapis
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
