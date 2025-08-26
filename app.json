@@ -69,7 +69,7 @@
   "notes": {
     "label": "PotreeConverter v2.0",
     "helpUrl": "https://github.com/potree/PotreeConverter",
-    "helpText": "Generates an octree LOD structure for streaming and real-time rendering of massive point clouds. Results can be viewed in web browsers with Potree or as a desktop application with PotreeDesktop.",
+    "helpText": "Generates an octree LOD structure for streaming and real-time rendering of massive point clouds. Results can be viewed in web browsers with Potree or as a desktop application with PotreeDesktop. Please archive /corral/utexas/BCS24011/ckan/lidar_files/${JobCreateDate}/${JobName}-${JobUUID}",
     "hideNodeCountAndCoresPerNode": true,
     "isInteractive": false,
     "icon": "cloud",
