@@ -1,14 +1,15 @@
 #!/bin/bash
+set -xe
 
 OUTPUTS_DIR=${_tapisExecSystemOutputDir}
 WEB_SERVER_DIR=/corral/utexas/BCS24011/ckan/lidar_files
 WEB_SERVER_URL=https://ckan.tacc.utexas.edu/lidar_files
 
-potreeconverter -i ${converterInput} -o ${OUTPUTS_DIR}
+./PotreeConverter -i ${converterInput} -o ${OUTPUTS_DIR}
 
 
 PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
-POINT_CLOUD_DIR=${PARENT_POINT_CLOUD_DIR}/${_tapisJobName}-${_tapisJobUuid}
+POINT_CLOUD_DIR=${PARENT_POINT_CLOUD_DIR}/${_tapisJobName}
 
 # Copy the pointcloud on the webserver web-accessible
 mkdir -p ${POINT_CLOUD_DIR}
