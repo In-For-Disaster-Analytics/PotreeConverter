@@ -5,7 +5,10 @@ OUTPUTS_DIR=${_tapisExecSystemOutputDir}
 WEB_SERVER_DIR=/corral/utexas/BCS24011/ckan/lidar_files
 WEB_SERVER_URL=https://ckan.tacc.utexas.edu/lidar_files
 
-./PotreeConverter -i ${converterInput} -o ${OUTPUTS_DIR}
+export PATH=$HOME:$PATH
+
+
+PotreeConverter -i ${converterInput} -o ${OUTPUTS_DIR}
 
 
 PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
