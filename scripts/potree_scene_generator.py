@@ -8,7 +8,7 @@ and interactive elements.
 
 Usage:
     python potree_scene_generator.py <metadata.json> [options]
-    python potree_scene_generator.py /path/to/output/metadata.json --scene-name my_scene
+    python potree_scene_generator.py /path/to/output/metadata.json --output-scene-file /path/to/scene.json5
 """
 
 import json
@@ -278,15 +278,14 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python potree_scene_generator.py output/metadata.json --scene-name my_scene
-  python potree_scene_generator.py output/metadata.json --scene-name my_scene --camera-position 1000,1000,300
-  python potree_scene_generator.py output/metadata.json --scene-name my_scene --fov 45 --point-budget 3000000
+  python potree_scene_generator.py output/metadata.json --output-scene-file my_scene.json5
+  python potree_scene_generator.py output/metadata.json --output-scene-file my_scene.json5 --camera-position 1000,1000,300
+  python potree_scene_generator.py output/metadata.json --output-scene-file my_scene.json5 --fov 45 --point-budget 3000000
         """
     )
     
     parser.add_argument("metadata", type=Path, help="Path to PotreeConverter metadata.json file")
-    parser.add_argument("--scene-name", "-n", default="scene", help="Name for the generated scene")
-    parser.add_argument("--output", "-o", type=Path, help="Output directory (default: same as metadata)")
+    parser.add_argument("--output-scene-file", "-o", type=Path, required=True, help="Output path for the generated scene file")
     parser.add_argument("--base-url", "-u", help="Base URL for point cloud data (e.g., https://example.com/path/to/metadata.json)")
     parser.add_argument("--camera-position", help="Camera position as x,y,z")
     parser.add_argument("--camera-target", help="Camera target as x,y,z")
@@ -304,9 +303,10 @@ Examples:
         print(f"Error: Metadata file not found: {args.metadata}")
         sys.exit(1)
     
-    # Set output directory
-    output_dir = args.output if args.output else args.metadata.parent
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Set output file path
+    output_file = args.output_scene_file
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    scene_name = output_file.stem
     
     # Parse camera settings
     options = {
@@ -340,16 +340,15 @@ Examples:
     metadata = generator.load_metadata(args.metadata)
     
     print(f"Generating JSON5 scene from: {args.metadata}")
-    print(f"Scene name: {args.scene_name}")
+    print(f"Scene name: {scene_name}")
     
-    scene_content = generator.generate_scene(metadata, args.scene_name, **options)
+    scene_content = generator.generate_scene(metadata, scene_name, **options)
     
     # Write scene file
-    scene_file = output_dir / f"{args.scene_name}.json5"
-    with open(scene_file, 'w') as f:
+    with open(output_file, 'w') as f:
         f.write(scene_content)
     
-    print(f"✅ JSON5 scene file generated: {scene_file}")
+    print(f"✅ JSON5 scene file generated: {output_file}")
     
     # Generate enhanced HTML if requested
     if args.generate_html:
@@ -358,8 +357,8 @@ Examples:
         else:
             # Look for template in common locations
             possible_templates = [
-                output_dir / "viewer_template.html",
-                output_dir.parent / "viewer_template.html",
+                output_file.parent / "viewer_template.html",
+                output_file.parent.parent / "viewer_template.html",
                 Path(__file__).parent.parent / "resources/page_template/viewer_template.html"
             ]
             html_template = None
@@ -369,17 +368,17 @@ Examples:
                     break
         
         if html_template:
-            html_output = output_dir / f"{args.scene_name}.html"
-            generator.generate_enhanced_html(html_template, args.scene_name, html_output)
+            html_output = output_file.parent / f"{scene_name}.html"
+            generator.generate_enhanced_html(html_template, scene_name, html_output)
         else:
             print("Warning: HTML template not found. Specify --html-template or place viewer_template.html in output directory")
     
     print(f"\n🎉 Scene generation complete!")
-    print(f"📁 Output directory: {output_dir}")
-    print(f"📄 Scene file: {scene_file.name}")
+    print(f"📁 Output directory: {output_file.parent}")
+    print(f"📄 Scene file: {output_file.name}")
     
     if args.generate_html and html_template:
-        print(f"🌐 HTML file: {args.scene_name}.html")
+        print(f"🌐 HTML file: {scene_name}.html")
 
 
 if __name__ == "__main__":
