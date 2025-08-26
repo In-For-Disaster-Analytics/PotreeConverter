@@ -1,6 +1,6 @@
 {
   "id": "potree-converter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "PotreeConverter generates an octree LOD structure for streaming and real-time rendering of massive point clouds. About 10 to 50 times faster than PotreeConverter 1.7 on SSDs.",
   "owner": "${apiUserId}",
   "enabled": true,
@@ -28,17 +28,7 @@
     "mpiCmd": null,
     "cmdPrefix": "mkdir $PWD/work $PWD/home $PWD/scratch;",
     "parameterSet": {
-      "appArgs": [
-        {
-          "name": "File/Folder to be converted",
-          "description": "File/Folder to be converted. Click the 'Select' button and then select the input.",
-          "inputMode": "REQUIRED",
-          "autoMountLocal": true,
-          "sourceUrl": null,
-          "targetPath": ".",
-          "envKey": "converterInput"
-        }
-      ],
+      "appArgs": [],
       "containerArgs": [],
       "schedulerOptions": [
         {
@@ -58,7 +48,18 @@
         "includeLaunchFiles": true
       }
     },
-    "fileInputs": [],
+    "fileInputs": [
+      {
+        "name": "File/Folder to be converted",
+        "description": "File/Folder to be converted. Click the 'Select' button and then select the input.",
+        "inputMode": "REQUIRED",
+        "autoMountLocal": true,
+        "envKey": "converterInput",
+        "notes": {},
+        "sourceUrl": null,
+        "targetPath": "."
+      }
+    ],
     "fileInputArrays": [],
     "nodeCount": 1,
     "subscriptions": [],
