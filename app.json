@@ -22,8 +22,7 @@
     "execSystemOutputDir": "${JobWorkingDir}/output",
     "execSystemLogicalQueue": "development",
     "archiveSystemId": "ls6",
-    "archiveSystemDir": "HOST_EVAL($HOME)/tapis-jobs-archive/${JobCreateDate}/${JobName}-${JobUUID}",
-
+    "archiveSystemDir": "/corral/utexas/BCS24011/ckan/lidar_files/${JobCreateDate}/${JobName}-${JobUUID}",
     "archiveOnAppError": true,
     "isMpi": false,
     "mpiCmd": null,
@@ -31,44 +30,22 @@
     "parameterSet": {
       "appArgs": [
         {
-          "name": "Input Path",
-          "description": "Path to input LAS/LAZ file or directory",
+          "name": "File/Folder to be converted",
+          "description": "File/Folder to be converted. Click the 'Select' button and then select the input.",
           "inputMode": "REQUIRED",
-          "arg": "-i"
-        },
-        {
-          "name": "Sampling Method",
-          "description": "Sampling strategy: poisson (default) or random",
-          "inputMode": "INCLUDE_ON_DEMAND",
-          "arg": "-m"
+          "autoMountLocal": true,
+          "sourceUrl": null,
+          "targetPath": ".",
+          "envKey": "converterInput"
         }
       ],
-      "containerArgs": [
-        {
-          "name": "Jupyter Mounts",
-          "description": "Mount for TAP functions and user dirs",
-          "inputMode": "FIXED",
-          "arg": "--bind /share,$WORK:$PWD/work,$HOME:$PWD/home,$SCRATCH:$PWD/scratch",
-          "notes": {
-            "isHidden": true
-          }
-        }
-      ],
+      "containerArgs": [],
       "schedulerOptions": [
         {
           "name": "TACC Scheduler Profile",
           "description": "Scheduler profile for HPC clusters at TACC",
           "inputMode": "FIXED",
           "arg": "--tapis-profile tacc-apptainer",
-          "notes": {
-            "isHidden": true
-          }
-        },
-        {
-          "name": "TAP Session Substring",
-          "description": "TAP Functions require the substring 'tap_' and in the slurm job name in order to function.",
-          "inputMode": "FIXED",
-          "arg": "--job-name ${JobName}-tap_",
           "notes": {
             "isHidden": true
           }
