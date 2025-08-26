@@ -44,11 +44,13 @@ COPY --from=builder /app/build/licenses /home/potree/licenses
 # Update library cache and set proper permissions
 RUN ldconfig && chmod +x /home/potree/PotreeConverter && \
     chmod -R 755 /home/potree
+	
 
 # Switch to non-root user
 USER potree
 WORKDIR /home/potree
 
+COPY scripts/potree_scene_generator.py .
 # Default command
 ENTRYPOINT ["/home/potree/PotreeConverter"]
 CMD ["--help"]
