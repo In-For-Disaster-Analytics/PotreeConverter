@@ -49,7 +49,7 @@ jobs:
             type=semver,pattern={{version}},suffix=-tapis
             type=semver,pattern={{major}}.{{minor}},suffix=-tapis
             type=raw,value=latest-tapis,enable={{is_default_branch}}
-            type=sha,prefix={{branch}}-,suffix=-tapis
+            type=sha,suffix=-tapis
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
