@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
     cmake \
     git \
     libtbb-dev \
-		python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -31,6 +30,7 @@ FROM ubuntu:22.04
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     libtbb12 \
+		python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
