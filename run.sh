@@ -1,6 +1,7 @@
 #!/bin/bash
 set -xe
 
+
 OUTPUTS_DIR=${_tapisExecSystemOutputDir}
 WEB_SERVER_DIR=/corral/utexas/BCS24011/ckan/lidar_files
 WEB_SERVER_URL=https://ckan.tacc.utexas.edu/lidar_files
@@ -24,6 +25,8 @@ METADATA_FILE=${OUTPUTS_DIR}/metadata.json
 METADATA_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUuid}/metadata.json
 SCENE_FILE=${OUTPUTS_DIR}/scene.json
 # Generate the scene file
+module load python3
+
 python potree_scene_generator.py \
 	${METADATA_FILE} \
 	--output-scene-file ${SCENE_FILE} \
