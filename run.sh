@@ -27,7 +27,7 @@ SCENE_FILE=${OUTPUTS_DIR}/scene.json
 # Generate the scene file
 module load python3
 
-python potree_scene_generator.py \
+python3 potree_scene_generator.py \
 	${METADATA_FILE} \
 	--output-scene-file ${SCENE_FILE} \
 	--base-url ${METADATA_URL}
