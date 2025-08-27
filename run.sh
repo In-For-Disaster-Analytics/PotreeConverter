@@ -8,7 +8,7 @@ WEB_SERVER_URL=https://ckan.tacc.utexas.edu/lidar_files
 export PATH=$HOME:$PATH
 
 
-PotreeConverter -i ${converterInput} -o ${OUTPUTS_DIR}
+/home/potree/PotreeConverter -i ${converterInput} -o ${OUTPUTS_DIR}
 
 
 PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
