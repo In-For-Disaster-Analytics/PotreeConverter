@@ -1,39 +1,60 @@
-
 # About
 
-PotreeConverter generates an octree LOD structure for streaming and real-time rendering of massive point clouds. The results can be viewed in web browsers with [Potree](https://github.com/potree/potree) or as a desktop application with [PotreeDesktop](https://github.com/potree/PotreeDesktop). 
+PotreeConverter generates an octree LOD structure for streaming and real-time rendering of massive point clouds. The results can be viewed in web browsers with [Potree](https://github.com/potree/potree) or as a desktop application with [PotreeDesktop](https://github.com/potree/PotreeDesktop).
 
 Version 2.0 is a complete rewrite with following differences over the previous version 1.7:
 
-* About 10 to 50 times faster than PotreeConverter 1.7 on SSDs.
-* Produces a total of 3 files instead of thousands to tens of millions of files. The reduction of the number of files improves file system operations such as copy, delete and upload to servers from hours and days to seconds and minutes. 
-* Better support for standard LAS attributes and arbitrary extra attributes. Full support (e.g. int64 and uint64) in development.
-* Optional compression is not yet available in the new converter but on the roadmap for a future update.
+- About 10 to 50 times faster than PotreeConverter 1.7 on SSDs.
+- Produces a total of 3 files instead of thousands to tens of millions of files. The reduction of the number of files improves file system operations such as copy, delete and upload to servers from hours and days to seconds and minutes.
+- Better support for standard LAS attributes and arbitrary extra attributes. Full support (e.g. int64 and uint64) in development.
+- Optional compression is not yet available in the new converter but on the roadmap for a future update.
 
-Altough the converter made a major step to version 2.0, the format it produces is also supported by Potree 1.7. The Potree viewer is scheduled to make the major step to version 2.0 in 2021, with a rewrite in WebGPU. 
+Altough the converter made a major step to version 2.0, the format it produces is also supported by Potree 1.7. The Potree viewer is scheduled to make the major step to version 2.0 in 2021, with a rewrite in WebGPU.
 
 # Publications
 
-* [Potree: Rendering Large Point Clouds in Web Browsers](https://www.cg.tuwien.ac.at/research/publications/2016/SCHUETZ-2016-POT/SCHUETZ-2016-POT-thesis.pdf)
-* [Fast Out-of-Core Octree Generation for Massive Point Clouds](https://www.cg.tuwien.ac.at/research/publications/2020/SCHUETZ-2020-MPC/), _Schütz M., Ohrhallinger S., Wimmer M._
+- [Potree: Rendering Large Point Clouds in Web Browsers](https://www.cg.tuwien.ac.at/research/publications/2016/SCHUETZ-2016-POT/SCHUETZ-2016-POT-thesis.pdf)
+- [Fast Out-of-Core Octree Generation for Massive Point Clouds](https://www.cg.tuwien.ac.at/research/publications/2020/SCHUETZ-2020-MPC/), _Schütz M., Ohrhallinger S., Wimmer M._
 
 # Getting Started
+
+## Tapis Application
+
+The Tapis Application is available at: [https://ptdatax.tacc.utexas.edu/workbench/applications](https://ptdatax.tacc.utexas.edu/workbench/applications)
+
+The goal of the Tapis Application is to generate Point Clouds and upload the files to a world-accessible location for easy sharing and visualization.
+
+**Note:** When submitting jobs through the web interface, ensure the Archive Directory is set to:
+
+```
+/corral/utexas/BCS24011/ckan/lidar_files/${JobName}-${JobUUID}
+```
+
+### Finding the Public URL
+
+After your job completes successfully:
+
+1. Click on the "Output Location" link in the job status table
+2. Open the `tapisjob.out` file to find the public URL where your converted point cloud can be accessed
 
 ## Docker (Recommended)
 
 The easiest way to run PotreeConverter is using Docker:
 
 1. **Pull the pre-built image:**
+
    ```bash
    docker pull ghcr.io/mosoriob/potreeconverter:latest
    ```
 
 2. **Or build locally:**
+
    ```bash
    docker build -t potreeconverter .
    ```
 
 3. **Run the converter:**
+
    ```bash
    # Basic usage
    docker run -it --user $(id -u):$(id -g) \
@@ -53,11 +74,13 @@ The easiest way to run PotreeConverter is using Docker:
 On TACC systems, use Apptainer (formerly Singularity) to run the container:
 
 1. **Load the Apptainer module:**
+
    ```bash
    module load tacc-apptainer
    ```
 
 2. **Run PotreeConverter:**
+
    ```bash
    # Basic usage
    apptainer exec docker://ghcr.io/mosoriob/potreeconverter:latest \
@@ -73,40 +96,39 @@ On TACC systems, use Apptainer (formerly Singularity) to run the container:
 ## Build from Source
 
 1. Download windows binaries or
-    * Download source code
-	* Install [CMake](https://cmake.org/) 3.16 or later
-	* Create and jump into folder "build"
-	    ```
-	    mkdir build
-	    cd build
-	    ```
-	* run 
-	    ```
-	    cmake ../
-	    ```
-	* On linux, run: ```make```
-	* On windows, open Visual Studio 2019 Project ./Converter/Converter.sln and compile it in release mode
-2. run ```PotreeConverter.exe <input> -o <outputDir>```
-    * Optionally specify the sampling strategy:
-	* Poisson-disk sampling (default): ```PotreeConverter.exe <input> -o <outputDir> -m poisson```
-	* Random sampling: ```PotreeConverter.exe <input> -o <outputDir> -m random```
+   - Download source code
+   - Install [CMake](https://cmake.org/) 3.16 or later
+   - Create and jump into folder "build"
+     ```
+     mkdir build
+     cd build
+     ```
+   - run
+     ```
+     cmake ../
+     ```
+   - On linux, run: `make`
+   - On windows, open Visual Studio 2019 Project ./Converter/Converter.sln and compile it in release mode
+2. run `PotreeConverter.exe <input> -o <outputDir>`
+   - Optionally specify the sampling strategy:
+   - Poisson-disk sampling (default): `PotreeConverter.exe <input> -o <outputDir> -m poisson`
+   - Random sampling: `PotreeConverter.exe <input> -o <outputDir> -m random`
 
 In Potree, modify one of the examples with following load command:
 
 ```javascript
-let url = "../pointclouds/D/temp/test/metadata.json";
-Potree.loadPointCloud(url).then(e => {
-	let pointcloud = e.pointcloud;
-	let material = pointcloud.material;
+let url = '../pointclouds/D/temp/test/metadata.json';
+Potree.loadPointCloud(url).then((e) => {
+  let pointcloud = e.pointcloud;
+  let material = pointcloud.material;
 
-	material.activeAttributeName = "rgba";
-	material.minSize = 2;
-	material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+  material.activeAttributeName = 'rgba';
+  material.minSize = 2;
+  material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
 
-	viewer.scene.addPointCloud(pointcloud);
-	viewer.fitToScreen();
+  viewer.scene.addPointCloud(pointcloud);
+  viewer.fitToScreen();
 });
-
 ```
 
 # Alternatives
@@ -162,7 +184,7 @@ Performance comparison (Ryzen 2700, NVMe SSD):
 
 ![](./docs/images/performance_chart.png)
 
-# Bibtex 
+# Bibtex
 
 ```
 @article{SCHUETZ-2020-MPC,
