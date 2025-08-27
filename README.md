@@ -56,7 +56,7 @@ The easiest way to run PotreeConverter is using Docker:
 1. **Pull the pre-built image:**
 
    ```bash
-   docker pull ghcr.io/mosoriob/potreeconverter:latest
+   docker pull ghcr.io/in-for-disaster-analytics/potreeconverter:latest
    ```
 
 2. **Or build locally:**
@@ -95,11 +95,11 @@ On TACC systems, use Apptainer (formerly Singularity) to run the container:
 
    ```bash
    # Basic usage
-   apptainer exec docker://ghcr.io/mosoriob/potreeconverter:latest \
+   apptainer exec docker://ghcr.io/in-for-disaster-analytics/potreeconverter:latest \
      PotreeConverter -i /path/to/input.laz -o /path/to/output
 
    # With sampling strategy
-   apptainer exec docker://ghcr.io/mosoriob/potreeconverter:latest \
+   apptainer exec docker://ghcr.io/in-for-disaster-analytics/potreeconverter:latest \
      PotreeConverter -i /path/to/input.laz -o /path/to/output -m poisson
    ```
 

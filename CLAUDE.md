@@ -9,6 +9,7 @@ PotreeConverter v2.0 is a C++ application that generates octree LOD structures f
 ## Build Commands
 
 ### Native Build (Linux/macOS/Windows)
+
 ```bash
 mkdir build
 cd build
@@ -18,17 +19,19 @@ make        # Linux/macOS
 ```
 
 ### Docker Build (Recommended)
+
 ```bash
 # Build locally
 docker build -t potreeconverter .
 
 # Or pull pre-built image
-docker pull ghcr.io/mosoriob/potreeconverter:latest
+docker pull ghcr.io/in-for-disaster-analytics/potreeconverter:latest
 ```
 
 ## Usage Commands
 
 ### Docker Usage
+
 ```bash
 # Basic conversion
 docker run -it --user $(id -u):$(id -g) \
@@ -42,13 +45,15 @@ docker run -it --user $(id -u):$(id -g) \
 ```
 
 ### TACC/Apptainer Usage
+
 ```bash
 module load tacc-apptainer
-apptainer exec docker://ghcr.io/mosoriob/potreeconverter:latest \
+apptainer exec docker://ghcr.io/in-for-disaster-analytics/potreeconverter:latest \
   PotreeConverter -i /path/to/input.laz -o /path/to/output -m poisson
 ```
 
 ### Native Binary Usage
+
 ```bash
 PotreeConverter <input> -o <outputDir> -m <sampling_method>
 # Sampling methods: poisson (default), random
@@ -57,6 +62,7 @@ PotreeConverter <input> -o <outputDir> -m <sampling_method>
 ## Architecture
 
 ### Core Components
+
 - **Main Application**: `Converter/src/main.cpp` - Entry point and CLI handling
 - **Chunker**: `chunker_countsort_laszip.cpp/.h` - Point cloud chunking with LAZ compression
 - **Indexer**: `indexer.cpp/.h` - Octree index generation and spatial organization
@@ -64,25 +70,30 @@ PotreeConverter <input> -o <outputDir> -m <sampling_method>
 - **Utilities**: `converter_utils.h`, `logger.cpp/.h`, `structures.h`
 
 ### Dependencies
+
 - **LASlip**: `libs/laszip/` - LAZ compression/decompression
-- **Brotli**: `libs/brotli/` - General compression library  
+- **Brotli**: `libs/brotli/` - General compression library
 - **JSON**: `libs/json/` - Single-header JSON library
 - **TBB**: Intel Threading Building Blocks (system dependency)
 - **Arguments**: `libs/arguments/` - Command-line argument parsing
 
 ### Output Structure
+
 The converter produces 3 files:
+
 1. `metadata.json` - Point cloud metadata and structure
 2. Octree hierarchy file
 3. Point data file
 
 ### Sampling Strategies
+
 - **Poisson-disk sampling** (default): Even distribution, better quality
 - **Random sampling**: Faster but less uniform distribution
 
 ## Testing
 
 The project includes test utilities:
+
 - `tools/testing.mjs` - Node.js testing script for Windows
 - `testing/testing.mjs` - Cross-platform testing utilities
 - Test data located in `scripts/test_data/`
