@@ -24,9 +24,9 @@ fi
 METADATA_FILE=${OUTPUTS_DIR}/metadata.json
 METADATA_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUuid}/metadata.json
 SCENE_FILE=${OUTPUTS_DIR}/scene.json
-# Generate the scene file
 
-python3 potree_scene_generator.py \
+# Generate the scene file
+python3 /tapis/potree_scene_generator.py \
 	${METADATA_FILE} \
 	--output-scene-file ${SCENE_FILE} \
 	--base-url ${METADATA_URL}

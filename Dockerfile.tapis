@@ -53,6 +53,7 @@ WORKDIR /home/potree
 
 COPY scripts/potree_scene_generator.py .
 COPY --chmod=755 run.sh /tapis/run.sh
+COPY --chmod=755 scripts/potree_scene_generator.py /tapis/potree_scene_generator.py
 
 # Default command
 ENTRYPOINT [ "/tapis/run.sh" ]
