@@ -30,12 +30,24 @@ The goal of the Tapis Application is to generate Point Clouds and upload the fil
 /corral/utexas/BCS24011/ckan/lidar_files/${JobName}-${JobUUID}
 ```
 
+### How Does It Work?
+
+The Tapis Application workflow:
+
+1. **Processing**: PotreeConverter processes your LAS/LAZ files and generates the octree structure in the job's output directory
+2. **Scene Generation**: A Python script automatically creates a `scene.json` file with the proper web URLs for viewing
+3. **Archiving**: Tapis automatically archives the output directory to `/corral/utexas/BCS24011/ckan/lidar_files/${JobName}-${JobUUID}`
+4. **Web Access**: The archived files become publicly accessible via the CKAN server at `https://ckan.tacc.utexas.edu/lidar_files/${JobName}-${JobUUID}/`
+
+**Important**: Only the `ptdatax` system can write to the archive path. Jobs must be submitted through the proper Tapis interface.
+
 ### Finding the Public URL
 
 After your job completes successfully:
 
 1. Click on the "Output Location" link in the job status table
 2. Open the `tapisjob.out` file to find the public URL where your converted point cloud can be accessed
+3. Look for the "Scene URL" in the output logs - this is the direct link to your web-viewable point cloud
 
 ## Docker (Recommended)
 
