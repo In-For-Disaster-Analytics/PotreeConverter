@@ -5,11 +5,13 @@ OUTPUTS_DIR=${_tapisExecSystemOutputDir}
 WEB_SERVER_DIR=/corral/utexas/BCS24011/ckan/lidar_files
 WEB_SERVER_URL=https://ckan.tacc.utexas.edu/lidar_files
 
-export PATH=$HOME:$PATH
-
-
-/home/potree/PotreeConverter -i ${converterInput} -o ${OUTPUTS_DIR}
-
+if [ -n "${sourcelas}" ]; then
+	echo "Using value from env"
+  /home/potree/PotreeConverter -i ${sourcelas} -o ${OUTPUTS_DIR}
+else
+	echo "Using default input"
+	/home/potree/PotreeConverter -i sourcelas -o ${OUTPUTS_DIR}
+fi
 
 PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
 POINT_CLOUD_DIR=${PARENT_POINT_CLOUD_DIR}/${_tapisJobName}
