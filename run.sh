@@ -14,6 +14,10 @@ else
 	/home/potree/PotreeConverter -i ${_tapisExecSystemInputDir}/sourcelas -o ${OUTPUTS_DIR}
 fi
 
+
+# _tapisArchiveSystemDir: /corral/utexas/BCS24011/ckan/lidar_files/${JobCreateDate}/${JobName}-${JobUUID}
+
+
 #PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
 #POINT_CLOUD_DIR=${PARENT_POINT_CLOUD_DIR}/${_tapisJobName}
 
@@ -22,9 +26,9 @@ fi
 #cp -r ${OUTPUTS_DIR} ${POINT_CLOUD_DIR}
 
 METADATA_FILE=${OUTPUTS_DIR}/metadata.json
-METADATA_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUuid}/metadata.json
+METADATA_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUUID}/metadata.json
 SCENE_FILE=${OUTPUTS_DIR}/scene.json
-SCENE_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUuid}/scene.json
+SCENE_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUUID}/scene.json
 
 # Generate the scene file
 python3 /tapis/potree_scene_generator.py \
