@@ -10,7 +10,7 @@ if [ -n "${sourcelas}" ]; then
   /home/potree/PotreeConverter -i ${sourcelas} -o ${OUTPUTS_DIR}
 else
 	echo "Using default input"
-	/home/potree/PotreeConverter -i sourcelas -o ${OUTPUTS_DIR}
+	/home/potree/PotreeConverter -i ${_tapisExecSystemInputDir}/sourcelas -o ${OUTPUTS_DIR}
 fi
 
 PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
