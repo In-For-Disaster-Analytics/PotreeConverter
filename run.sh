@@ -24,6 +24,7 @@ fi
 METADATA_FILE=${OUTPUTS_DIR}/metadata.json
 METADATA_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUuid}/metadata.json
 SCENE_FILE=${OUTPUTS_DIR}/scene.json
+SCENE_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJobUuid}/scene.json
 
 # Generate the scene file
 python3 /tapis/potree_scene_generator.py \
@@ -32,3 +33,5 @@ python3 /tapis/potree_scene_generator.py \
 	--base-url ${METADATA_URL}
 
 setfacl -R -m u:33:rx ${OUTPUTS_DIR}
+
+echo "Scene URL: ${SCENE_URL}"
