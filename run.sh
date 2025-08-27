@@ -1,6 +1,5 @@
 #!/bin/bash
-set -xe
-
+set -x
 
 OUTPUTS_DIR=${_tapisExecSystemOutputDir}
 WEB_SERVER_DIR=/corral/utexas/BCS24011/ckan/lidar_files
@@ -18,8 +17,7 @@ fi
 # _tapisArchiveSystemDir: /corral/utexas/BCS24011/ckan/lidar_files/${JobCreateDate}/${JobName}-${JobUUID}
 
 
-#PARENT_POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobCreateDate}
-#POINT_CLOUD_DIR=${PARENT_POINT_CLOUD_DIR}/${_tapisJobName}
+POINT_CLOUD_DIR=${WEB_SERVER_DIR}/${_tapisJobName}-${_tapisJobUUID}
 
 # Copy the pointcloud on the webserver web-accessible
 #mkdir -p ${POINT_CLOUD_DIR}
@@ -38,5 +36,6 @@ python3 /tapis/potree_scene_generator.py \
 
 #setfacl -R -m u:33:rx ${OUTPUTS_DIR}
 chmod -R 755 ${OUTPUTS_DIR}
+cp -r ${OUTPUTS_DIR} ${POINT_CLOUD_DIR}
 
 echo "Scene URL: ${SCENE_URL}"
