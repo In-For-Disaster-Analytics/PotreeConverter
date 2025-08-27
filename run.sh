@@ -32,6 +32,6 @@ python3 /tapis/potree_scene_generator.py \
 	--output-scene-file ${SCENE_FILE} \
 	--base-url ${METADATA_URL}
 
-setfacl -R -m u:33:rx ${OUTPUTS_DIR}
+#setfacl -R -m u:33:rx ${OUTPUTS_DIR}
 
 echo "Scene URL: ${SCENE_URL}"

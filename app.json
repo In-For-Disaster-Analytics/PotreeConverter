@@ -1,13 +1,13 @@
 {
   "id": "potree-converter-publish",
-  "version": "2.0.3",
+  "version": "2.0.13",
   "description": "PotreeConverter generates an octree LOD structure for streaming and real-time rendering of massive point clouds. About 10 to 50 times faster than PotreeConverter 1.7 on SSDs.",
   "owner": "${apiUserId}",
   "enabled": true,
   "runtime": "SINGULARITY",
   "runtimeVersion": null,
   "runtimeOptions": ["SINGULARITY_RUN"],
-  "containerImage": "docker://ghcr.io/mosoriob/potreeconverter:pr-5-tapis",
+  "containerImage": "docker://ghcr.io/mosoriob/potreeconverter:sha-bc1a5e3-tapis",
   "jobType": "BATCH",
   "maxJobs": -1,
   "maxJobsPerUser": -1,
@@ -54,10 +54,10 @@
         "description": "File/Folder to be converted. Click the 'Select' button and then select the input.",
         "inputMode": "REQUIRED",
         "autoMountLocal": true,
-        "envKey": "converterInput",
+        "envKey": "sourcelas",
         "notes": {},
         "sourceUrl": null,
-        "targetPath": "."
+        "targetPath": "sourcelas"
       }
     ],
     "fileInputArrays": [],
