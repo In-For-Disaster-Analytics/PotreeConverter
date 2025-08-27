@@ -26,7 +26,7 @@ METADATA_URL=${WEB_SERVER_URL}/${_tapisJobCreateDate}/${_tapisJobName}-${_tapisJ
 SCENE_FILE=${OUTPUTS_DIR}/scene.json
 # Generate the scene file
 
-python potree_scene_generator.py \
+python3 potree_scene_generator.py \
 	${METADATA_FILE} \
 	--output-scene-file ${SCENE_FILE} \
 	--base-url ${METADATA_URL}
