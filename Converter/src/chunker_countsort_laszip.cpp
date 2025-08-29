@@ -128,7 +128,7 @@ namespace chunker_countsort_laszip {
 		vector<int> grid;
 	};
 
-	vector<std::atomic_int32_t> countPointsInCells(vector<Source> sources, Vector3 min, Vector3 max, int64_t gridSize, State& state, Attributes& outputAttributes, Monitor* monitor) {
+	vector<std::atomic_int32_t> countPointsInCells(vector<Source> sources, Vector3 min, Vector3 max, int64_t gridSize, State& state, Attributes& outputAttributes, Monitor* monitor, ::Options options) {
 
 		cout << endl;
 		cout << "=======================================" << endl;
@@ -152,6 +152,7 @@ namespace chunker_countsort_laszip {
 			Vector3 scale;
 			Vector3 offset;
 			Vector3 min;
+			bool continueOnError = false;
 			Vector3 max;
 		};
 
@@ -225,38 +226,92 @@ namespace chunker_countsort_laszip {
 					double y = coordinates[1];
 					double z = coordinates[2];
 
-					int32_t X = int32_t((x - posOffset.x) / posScale.x);
-					int32_t Y = int32_t((y - posOffset.y) / posScale.y);
-					int32_t Z = int32_t((z - posOffset.z) / posScale.z);
-
-					double ux = (double(X) * posScale.x + posOffset.x - min.x) / size.x;
-					double uy = (double(Y) * posScale.y + posOffset.y - min.y) / size.y;
-					double uz = (double(Z) * posScale.z + posOffset.z - min.z) / size.z;
-
-					bool inBox = ux >= 0.0 && uy >= 0.0 && uz >= 0.0;
-					inBox = inBox && ux <= 1.0 && uy <= 1.0 && uz <= 1.0;
-
-					if (!inBox) {
+					// Validate scale factors to prevent division by zero
+					if (posScale.x == 0.0 || posScale.y == 0.0 || posScale.z == 0.0) {
 						stringstream ss;
-						ss << "encountered point outside bounding box." << endl;
-						ss << "box.min: " << min.toString() << endl;
-						ss << "box.max: " << max.toString() << endl;
-						ss << "point: " << Vector3(x, y, z).toString() << endl;
-						ss << "file: " << path << endl;
-						ss << "PotreeConverter requires a valid bounding box to operate." << endl;
-						ss << "Please try to repair the bounding box, e.g. using lasinfo with the -repair_bb argument." << endl;
+						ss << "Invalid scale factors in LAS file: " << path << endl;
+						ss << "Scale factors: [" << posScale.x << ", " << posScale.y << ", " << posScale.z << "]" << endl;
+						ss << "Scale factors cannot be zero. Please check the LAS file header." << endl;
 						logger::ERROR(ss.str());
-
-						exit(123);
+						
+						// Skip this file if continue-on-error is enabled
+						if (task->continueOnError) {
+							logger::ERROR("Skipping file due to --continue-on-error flag");
+							break; // Exit the point processing loop for this file
+						} else {
+							exit(123);
+						}
 					}
 
-					int64_t ix = int64_t(std::min(dGridSize * ux, dGridSize - 1.0));
-					int64_t iy = int64_t(std::min(dGridSize * uy, dGridSize - 1.0));
-					int64_t iz = int64_t(std::min(dGridSize * uz, dGridSize - 1.0));
+					// Validate size values to prevent division by zero
+					if (size.x == 0.0 || size.y == 0.0 || size.z == 0.0) {
+						stringstream ss;
+						ss << "Invalid bounding box size in file: " << path << endl;
+						ss << "Size: [" << size.x << ", " << size.y << ", " << size.z << "]" << endl;
+						ss << "Bounding box dimensions cannot be zero." << endl;
+						logger::ERROR(ss.str());
+						
+						// Skip this file if continue-on-error is enabled
+						if (task->continueOnError) {
+							logger::ERROR("Skipping file due to --continue-on-error flag");
+							break; // Exit the point processing loop for this file
+						} else {
+							exit(123);
+						}
+					}
 
-					int64_t index = ix + iy * gridSize + iz * gridSize * gridSize;
+					try {
+						int32_t X = int32_t((x - posOffset.x) / posScale.x);
+						int32_t Y = int32_t((y - posOffset.y) / posScale.y);
+						int32_t Z = int32_t((z - posOffset.z) / posScale.z);
 
-					grid[index]++;
+						double ux = (double(X) * posScale.x + posOffset.x - min.x) / size.x;
+						double uy = (double(Y) * posScale.y + posOffset.y - min.y) / size.y;
+						double uz = (double(Z) * posScale.z + posOffset.z - min.z) / size.z;
+
+						bool inBox = ux >= 0.0 && uy >= 0.0 && uz >= 0.0;
+						inBox = inBox && ux <= 1.0 && uy <= 1.0 && uz <= 1.0;
+
+						if (!inBox) {
+							stringstream ss;
+							ss << "encountered point outside bounding box." << endl;
+							ss << "box.min: " << min.toString() << endl;
+							ss << "box.max: " << max.toString() << endl;
+							ss << "point: " << Vector3(x, y, z).toString() << endl;
+							ss << "file: " << path << endl;
+							ss << "PotreeConverter requires a valid bounding box to operate." << endl;
+							ss << "Please try to repair the bounding box, e.g. using lasinfo with the -repair_bb argument." << endl;
+							logger::ERROR(ss.str());
+
+							exit(123);
+						}
+
+						int64_t ix = int64_t(std::min(dGridSize * ux, dGridSize - 1.0));
+						int64_t iy = int64_t(std::min(dGridSize * uy, dGridSize - 1.0));
+						int64_t iz = int64_t(std::min(dGridSize * uz, dGridSize - 1.0));
+
+						int64_t index = ix + iy * gridSize + iz * gridSize * gridSize;
+
+						grid[index]++;
+					} catch (const std::exception& e) {
+						stringstream ss;
+						ss << "Floating point exception in coordinate transformation." << endl;
+						ss << "Point: [" << x << ", " << y << ", " << z << "]" << endl;
+						ss << "Scale: [" << posScale.x << ", " << posScale.y << ", " << posScale.z << "]" << endl;
+						ss << "Offset: [" << posOffset.x << ", " << posOffset.y << ", " << posOffset.z << "]" << endl;
+						ss << "Size: [" << size.x << ", " << size.y << ", " << size.z << "]" << endl;
+						ss << "File: " << path << endl;
+						ss << "Error: " << e.what() << endl;
+						logger::ERROR(ss.str());
+						
+						// Skip this file if continue-on-error is enabled
+						if (task->continueOnError) {
+							logger::ERROR("Skipping file due to --continue-on-error flag");
+							break; // Exit the point processing loop for this file
+						} else {
+							exit(123);
+						}
+					}
 				}
 
 			}
@@ -329,6 +384,7 @@ namespace chunker_countsort_laszip {
 				//task->offset = { header->x_offset, header->y_offset, header->z_offset };
 				task->min = min;
 				task->max = max;
+				task->continueOnError = options.continueOnError;
 
 				pool.addTask(task);
 
@@ -657,7 +713,7 @@ namespace chunker_countsort_laszip {
 
 	}
 
-	void distributePoints(vector<Source> sources, Vector3 min, Vector3 max, string targetDir, NodeLUT& lut, State& state, Attributes& outputAttributes, Monitor* monitor) {
+	void distributePoints(vector<Source> sources, Vector3 min, Vector3 max, string targetDir, NodeLUT& lut, State& state, Attributes& outputAttributes, Monitor* monitor, ::Options options) {
 
 		cout << endl;
 		cout << "=======================================" << endl;
@@ -687,13 +743,14 @@ namespace chunker_countsort_laszip {
 			Vector3 min;
 			Vector3 max;
 			Attributes inputAttributes;
+			bool continueOnError = false;
 		};
 
 		mutex mtx_push_point;
 
 		printElapsedTime("distributePoints1", tStart);
 
-		auto processor = [&mtx_push_point, &counters, targetDir, &state, tStart, &outputAttributes](shared_ptr<Task> task) {
+		auto processor = [&mtx_push_point, &counters, targetDir, &state, tStart, &outputAttributes, &options](shared_ptr<Task> task) {
 
 			auto path = task->path;
 			auto batchSize = task->batchSize;
@@ -869,7 +926,12 @@ namespace chunker_countsort_laszip {
 
 					logger::ERROR(ss.str());
 
-					exit(123);
+					if (options.continueOnError) {
+						logger::ERROR("Skipping point due to --continue-on-error flag");
+						continue; // Skip this point and continue with the next one
+					} else {
+						exit(123);
+					}
 				}
 
 				counts[nodeIndex]++;
@@ -981,6 +1043,7 @@ namespace chunker_countsort_laszip {
 				task->min = min;
 				task->max = max;
 				task->inputAttributes = inputAttributes;
+				task->continueOnError = options.continueOnError;
 
 				pool.addTask(task);
 
@@ -1203,7 +1266,7 @@ namespace chunker_countsort_laszip {
 		return {gridSize, lut};
 	}
 
-	void doChunking(vector<Source> sources, string targetDir, Vector3 min, Vector3 max, State& state, Attributes outputAttributes, Monitor* monitor) {
+	void doChunking(vector<Source> sources, string targetDir, Vector3 min, Vector3 max, State& state, Attributes outputAttributes, Monitor* monitor, Options options) {
 
 		auto tStart = now();
 
@@ -1231,7 +1294,7 @@ namespace chunker_countsort_laszip {
 		}
 
 		// COUNT
-		auto grid = countPointsInCells(sources, min, max, gridSize, state, outputAttributes, monitor);
+		auto grid = countPointsInCells(sources, min, max, gridSize, state, outputAttributes, monitor, options);
 
 		{ // DISTIRBUTE
 			auto tStartDistribute = now();
@@ -1239,7 +1302,7 @@ namespace chunker_countsort_laszip {
 			auto lut = createLUT(grid, gridSize);
 
 			state.currentPass = 2;
-			distributePoints(sources, min, max, targetDir, lut, state, outputAttributes, monitor);
+			distributePoints(sources, min, max, targetDir, lut, state, outputAttributes, monitor, options);
 
 			{
 				double duration = now() - tStartDistribute;
